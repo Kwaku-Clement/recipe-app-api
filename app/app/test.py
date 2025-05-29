@@ -2,8 +2,8 @@
 sample test file
 """
 
-from django.test import SimpleTestCase
 
+from django.test import SimpleTestCase
 from app import calc
 class CalcTests(SimpleTestCase):
     """Test the calc module."""
