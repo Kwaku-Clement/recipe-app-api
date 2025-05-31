@@ -18,16 +18,17 @@ ARG DEV=false
 
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    apk add --update --no-cache postgresql && \
+    apk add --update --no-cache --virtual .tmp-build-dev \
+    build-base postgresql-dev musl-dev libffi-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ "$DEV" = "true" ]; then \
     /py/bin/pip install -r /tmp/requirements.dev.txt; \
     fi && \
     rm -rf /tmp && \
-    apk del build-base libffi-dev && \
-    adduser \
-    --disabled-password \
-    --no-create-home \
-    django-user
+    apk del .tmp-build-dev && \
+    adduser --disabled-password --no-create-home django-user
+
 
 COPY ./app /app
 WORKDIR /app
