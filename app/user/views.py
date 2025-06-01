@@ -18,6 +18,7 @@ class CreateUserView(generics.CreateAPIView):
         """Create a new user with encrypted password"""
         serializer.save()
 
+
 class CreateTokenView(ObtainAuthToken):
     """Create a new auth token for the user"""
     serializer_class = AuthTokenSerializer
@@ -26,6 +27,7 @@ class CreateTokenView(ObtainAuthToken):
     # def post(self, request, *args, **kwargs):
     #     """Create and return a new auth token"""
     #     return super().post(request, *args, **kwargs)
+
 
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticated user"""

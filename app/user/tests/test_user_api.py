@@ -12,9 +12,11 @@ CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:me')
 
+
 def create_user(**params):
     """Create and return a new user"""
     return get_user_model().objects.create_user(**params)
+
 
 class PublicUserApiTests(TestCase):
     """Test the public features of the user API"""
@@ -62,7 +64,6 @@ class PublicUserApiTests(TestCase):
         ).exists()
         self.assertFalse(user_exists)
 
-
     def test_create_token_for_user(self):
         """Test that a token is created for the user"""
         user_details = {
@@ -82,9 +83,9 @@ class PublicUserApiTests(TestCase):
         self.assertIn('token', response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-
     def test_create_token_invalid_credentials(self):
-        """Test that token is not created if invalid credentials are given"""
+        """Test that token is not created
+          if invalid credentials are given"""
         create_user(email='test@example.com', password='testpass123')
         payload = {
             'email': 'test@example.com',
@@ -108,7 +109,8 @@ class PublicUserApiTests(TestCase):
 
     def test_create_token_missing_field(self):
         """Test that email and password are required"""
-        response = self.client.post(TOKEN_URL, {'email': 'one', 'password': ''})
+        response = self.client.post(TOKEN_URL, {'email': 'one',
+                                                'password': ''})
 
         self.assertNotIn('token', response.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -118,6 +120,7 @@ class PublicUserApiTests(TestCase):
         response = self.client.get(ME_URL)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class PrivateUserApiTests(TestCase):
     """Test API requests that require authentication"""
@@ -145,7 +148,8 @@ class PrivateUserApiTests(TestCase):
         """Test that POST is not allowed on the me endpoint"""
         response = self.client.post(ME_URL, {})
 
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code,
+                         status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_update_user_profile(self):
         """Test updating the user profile for authenticated user"""
@@ -161,7 +165,8 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(response.data['email'], self.user.email)
 
     # def test_update_user_profile_invalid(self):
-    #     """Test updating the user profile for authenticated user with invalid data"""
+    #     """Test updating the user profile for
+    # authenticated user with invalid data"""
     #     payload = {
     #         'name': 'New Name',
     #         'password': 'pw',

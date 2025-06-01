@@ -14,14 +14,14 @@ class AdminTestCase(TestCase):
         """Set up the test case with a superuser."""
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
-            email = 'admin@example.com',
-            password = 'testpass123'
+            email='admin@example.com',
+            password='testpass123'
         )
         self.client.force_login(self.admin_user)
         self.user = get_user_model().objects.create_user(
-            email = 'user@example.com',
-            password = 'testpass123',
-            name = 'Test User'
+            email='user@example.com',
+            password='testpass123',
+            name='Test User'
         )
 
     def test_admin_user_list(self):
