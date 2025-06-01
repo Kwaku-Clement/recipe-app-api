@@ -8,3 +8,4 @@ django-extensions
 django-allauth
 django-storages
 psycopg2
+drf-spectacular
