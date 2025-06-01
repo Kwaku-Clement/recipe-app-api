@@ -34,8 +34,9 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': ('email', 'password1', 'password2',
                        'name', 'is_active', 'is_staff', 'is_superuser'),
-                })
+                       }),
     )
 
 
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Recipe)
