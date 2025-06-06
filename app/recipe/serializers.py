@@ -26,40 +26,58 @@ class TagSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     """Serializer for recipe objects."""
     tags = TagSerializer(many=True, required=False)
+    ingredients = IngredientSerializer(many=True, required=False)
 
     class Meta:
         model = Recipe
         fields = ('id', 'title', 'time_minutes', 'price',
-                  'description', 'link', 'tags')
+                  'description', 'link', 'tags', 'ingredients')
         read_only_fields = ('id',)
 
     def _get_or_create_tags(self, tags, recipe):
         """Handle getting or creating tags as needed."""
         auth_user = self.context['request'].user
-
         for tag_data in tags:
             tag_obj, created = Tag.objects.get_or_create(
                 user=auth_user, **tag_data
             )
             recipe.tags.add(tag_obj)
 
+    def _get_or_create_ingredients(self, ingredients, recipe):
+        """Handle getting or creating ingredients as needed."""
+        auth_user = self.context['request'].user
+        for ingredient_data in ingredients:
+            ingredient_obj, created = Ingredient.objects.get_or_create(
+                user=auth_user, **ingredient_data
+            )
+            recipe.ingredient.add(ingredient_obj)
+
     def create(self, validated_data):
-        """Create and return a new tag."""
+        """Create and return a new recipe."""
         tags = validated_data.pop('tags', [])
+        ingredients = validated_data.pop('ingredients', [])
+
         recipe = Recipe.objects.create(**validated_data)
 
         self._get_or_create_tags(tags, recipe)
+        self._get_or_create_ingredients(ingredients, recipe)
 
         return recipe
 
-    def update(self, instance, validate_data):
-        """Update and return an existing tag."""
-        tags = validate_data.pop('tags', [])
+    def update(self, instance, validated_data):
+        """Update and return an existing recipe."""
+        tags = validated_data.pop('tags', None)
+        ingredients = validated_data.pop('ingredients', None)
+
         if tags is not None:
             instance.tags.clear()
             self._get_or_create_tags(tags, instance)
 
-        for attr, value in validate_data.items():
+        if ingredients is not None:
+            instance.ingredient.clear()
+            self._get_or_create_ingredients(ingredients, instance)
+
+        for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
         instance.save()
