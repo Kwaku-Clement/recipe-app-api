@@ -1,6 +1,7 @@
 """
-Test cases for the module.
+Test cases for the core models.
 """
+from unittest.mock import patch
 from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -13,8 +14,8 @@ def create_user(email="user@example.com", password="testpass123"):
     return get_user_model().objects.create_user(email, password)
 
 
-class UserTest(TestCase):
-    """Test case for the User model."""
+class UserTests(TestCase):
+    """Test cases for the User model."""
 
     def test_create_user_with_email(self):
         """Test creating a user with an email."""
@@ -61,7 +62,7 @@ class UserTest(TestCase):
         )
         recipe = models.Recipe.objects.create(
             user=user,
-            title='Sample recipe name',
+            title='Sample Recipe Title',
             time_minutes=10,
             price=Decimal('5.99'),
             description='A simple test recipe description.',
@@ -82,3 +83,12 @@ class UserTest(TestCase):
             name='Ingredient1'
         )
         self.assertEqual(str(ingredient), ingredient.name)
+
+    @patch('core.models.uuid.uuid4')
+    def test_recipe_filename_uuid(self, mock_uuid):
+        """Test generating image path."""
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.recipe_image_file_path(None, 'example.jpg')
+
+        self.assertEqual(file_path, f'uploads/recipe/{uuid}.jpg')

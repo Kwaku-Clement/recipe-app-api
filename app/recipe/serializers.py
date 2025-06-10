@@ -50,7 +50,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             ingredient_obj, created = Ingredient.objects.get_or_create(
                 user=auth_user, **ingredient_data
             )
-            recipe.ingredient.add(ingredient_obj)
+            recipe.ingredients.add(ingredient_obj)
 
     def create(self, validated_data):
         """Create and return a new recipe."""
@@ -74,7 +74,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             self._get_or_create_tags(tags, instance)
 
         if ingredients is not None:
-            instance.ingredient.clear()
+            instance.ingredients.clear()
             self._get_or_create_ingredients(ingredients, instance)
 
         for attr, value in validated_data.items():
@@ -88,5 +88,14 @@ class RecipeDetailSerializer(RecipeSerializer):
     """Serializer for recipe detail view."""
 
     class Meta(RecipeSerializer.Meta):
-        fields = RecipeSerializer.Meta.fields + ('user',)
-        read_only_fields = RecipeSerializer.Meta.read_only_fields + ('user',)
+        fields = RecipeSerializer.Meta.fields + ('description', 'image')
+
+
+class RecipeImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading images to recipes."""
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'image')
+        read_only_fields = ('id',)
+        extra_kwargs = {'image': {'required': 'True'}}

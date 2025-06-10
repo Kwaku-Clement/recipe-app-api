@@ -15,20 +15,22 @@ COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 
 ARG DEV=false
 
-
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
-    apk add --update --no-cache postgresql && \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tmp-build-dev \
-    build-base postgresql-dev musl-dev libffi-dev && \
+    build-base postgresql-dev musl-dev zlib zlib-dev libffi-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ "$DEV" = "true" ]; then \
     /py/bin/pip install -r /tmp/requirements.dev.txt; \
     fi && \
     rm -rf /tmp && \
     apk del .tmp-build-dev && \
-    adduser --disabled-password --no-create-home django-user
-
+    adduser --disabled-password --no-create-home django-user && \
+    mkdir -p /vol/web/media && \
+    mkdir -p /vol/web/static && \
+    chown -R django-user:django-user /vol && \
+    chmod -R 755 /vol  # Fixed typo: chomd -> chmod
 
 COPY ./app /app
 WORKDIR /app
