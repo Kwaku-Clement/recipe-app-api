@@ -8,8 +8,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from recipe import serializers
 from core.models import Recipe, Tag, Ingredient
-from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter
+from drf_spectacular.utils import (extend_schema_view,
+                                   extend_schema, OpenApiParameter)
 from drf_spectacular.types import OpenApiTypes
+
+
 @extend_schema_view(
     list=extend_schema(
         parameters=[
@@ -86,6 +89,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
+
 
 @extend_schema_view(
     list=extend_schema(

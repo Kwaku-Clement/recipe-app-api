@@ -393,8 +393,10 @@ class PrivateRecipeApiTests(TestCase):
         r2 = create_recipe(user=self.user, title='Chicken Cacciatore')
         r3 = create_recipe(user=self.user, title='Red lentil Deal')
 
-        ingredient1 = Ingredient.objects.create(user=self.user, name='Feta Cheese')
-        ingredient2 = Ingredient.objects.create(user=self.user, name='Chicken')
+        ingredient1 = Ingredient.objects.create(user=self.user,
+                                                name='Feta Cheese')
+        ingredient2 = Ingredient.objects.create(user=self.user,
+                                                name='Chicken')
 
         r1.ingredients.add(ingredient1)
         r2.ingredients.add(ingredient2)
